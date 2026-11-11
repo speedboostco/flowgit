@@ -1,0 +1,44 @@
+{
+  "name": "@speedboostco/flowgit",
+  "version": "0.1.0",
+  "description": "Git version control, diffs and dev→prod environments for self-hosted n8n Community Edition.",
+  "keywords": [
+    "n8n",
+    "git",
+    "version-control",
+    "environments",
+    "ci",
+    "workflow",
+    "backup",
+    "devops"
+  ],
+  "license": "MIT",
+  "author": "speedboostco",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/speedboostco/flowgit.git"
+  },
+  "homepage": "https://github.com/speedboostco/flowgit#readme",
+  "bugs": "https://github.com/speedboostco/flowgit/issues",
+  "type": "module",
+  "bin": {
+    "flowgit": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "tsc -p tsconfig.test.json && node --test build-test/test/flowgit.test.js",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.0.0"
+  }
+}

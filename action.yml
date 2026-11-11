@@ -1,0 +1,52 @@
+name: "flowgit for n8n"
+description: "Lint, diff and deploy n8n workflows from Git (works with the free Community Edition)."
+author: "speedboostco"
+branding:
+  icon: "git-branch"
+  color: "orange"
+inputs:
+  command:
+    description: "lint | diff | push | pull"
+    required: true
+  env:
+    description: "Environment name from flowgit.json (for diff/push/pull)"
+    required: false
+    default: ""
+  args:
+    description: "Extra arguments, e.g. --activate or --strict"
+    required: false
+    default: ""
+  working-directory:
+    description: "Directory containing flowgit.json"
+    required: false
+    default: "."
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: "20"
+    - name: Build flowgit
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: npm ci --no-audit --no-fund --loglevel=error && npm run build --silent
+    - name: Run flowgit
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        FLOWGIT_COMMAND: ${{ inputs.command }}
+        FLOWGIT_ENV: ${{ inputs.env }}
+        FLOWGIT_ARGS: ${{ inputs.args }}
+      run: |
+        set -euo pipefail
+        cmd=(node "${{ github.action_path }}/dist/cli.js" "$FLOWGIT_COMMAND")
+        if [ -n "$FLOWGIT_ENV" ]; then cmd+=(--env "$FLOWGIT_ENV"); fi
+        # shellcheck disable=SC2206
+        if [ -n "$FLOWGIT_ARGS" ]; then cmd+=($FLOWGIT_ARGS); fi
+        "${cmd[@]}" | tee flowgit-output.txt
+        {
+          echo "### flowgit $FLOWGIT_COMMAND ${FLOWGIT_ENV}"
+          echo '```'
+          cat flowgit-output.txt
+          echo '```'
+        } >> "$GITHUB_STEP_SUMMARY"
