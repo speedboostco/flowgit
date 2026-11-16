@@ -25,7 +25,7 @@ jobs:
         run: |
           v=$(node -p "require('./package.json').version")
           echo "version=$v" >> "$GITHUB_OUTPUT"
-          if npm view "@speedboostco/flowgit@$v" version >/dev/null 2>&1; then
+          if npm view "@speedboostcoo/flowgit@$v" version >/dev/null 2>&1; then
             echo "Version $v already published, skipping."
             echo "published=false" >> "$GITHUB_OUTPUT"
           else

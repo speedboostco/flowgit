@@ -34,7 +34,7 @@ Works with n8n 1.x and 2.x through the public REST API (tested against n8n 2.47)
 ## Quick start
 
 ```bash
-npm i -g @speedboostco/flowgit     # or: npx @speedboostco/flowgit <command>
+npm i -g @speedboostcoo/flowgit     # or: npx @speedboostcoo/flowgit <command>
 
 mkdir my-n8n && cd my-n8n && git init
 flowgit init                        # creates flowgit.json
