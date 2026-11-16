@@ -1,7 +1,7 @@
 {
   "name": "@speedboostco/flowgit",
   "version": "0.1.0",
-  "description": "Git version control, diffs and dev→prod environments for self-hosted n8n Community Edition.",
+  "description": "Git version control, diffs and dev\u2192prod environments for self-hosted n8n Community Edition.",
   "keywords": [
     "n8n",
     "git",
@@ -40,5 +40,8 @@
   "devDependencies": {
     "@types/node": "^22.0.0",
     "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
