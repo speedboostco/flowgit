@@ -1,0 +1,40 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+permissions:
+  contents: write
+  id-token: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - name: Check tag matches package.json
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          v=$(node -p "require('./package.json').version")
+          [ "v$v" = "${GITHUB_REF_NAME}" ] || { echo "Tag ${GITHUB_REF_NAME} != package.json v$v"; exit 1; }
+      - name: Publish to npm
+        run: |
+          v=$(node -p "require('./package.json').version")
+          if npm view "@speedboostco/flowgit@$v" version >/dev/null 2>&1; then
+            echo "Version $v already published, skipping."
+          else
+            npm publish --access public --provenance
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: gh release create "$GITHUB_REF_NAME" --generate-notes --verify-tag || true
+        env:
+          GH_TOKEN: ${{ github.token }}
